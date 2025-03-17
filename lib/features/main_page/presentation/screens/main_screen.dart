@@ -28,7 +28,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onScroll() {
-    final scrollPosition = _scrollController.position.pixels;
     for (var i = 0; i < CategoriesModel.categories.length; i++) {
       final key = _categoryKeys[CategoriesModel.categories[i]];
       if (key != null) {
@@ -55,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
         Scrollable.ensureVisible(
           context,
           duration: const Duration(milliseconds: 200),
-          alignment: 0.1, // Adjust this value to control the scroll position
+          alignment: 0.1,
         );
       }
     }
@@ -78,7 +77,6 @@ class _MainScreenState extends State<MainScreen> {
             },
             theme: theme,
           ),
-          // Список продуктов (прокручиваемый)
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (notification) {

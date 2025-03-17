@@ -11,6 +11,9 @@ final themeData = ThemeData(
       fixedSize: Size(116, 24)
     ),
   ),
+  iconTheme: IconThemeData(
+    color: Colors.white
+  ),
   textTheme: TextTheme(
     bodySmall: TextStyle(
       fontSize: 12,
