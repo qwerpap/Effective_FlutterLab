@@ -10,7 +10,7 @@ class CategoryTItle extends StatelessWidget {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Text('Черный кофе', style: theme.textTheme.titleLarge),
+      child: Text(category, style: theme.textTheme.titleLarge),
     );
   }
 }

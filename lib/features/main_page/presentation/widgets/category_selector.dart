@@ -37,6 +37,13 @@ class CategorySelector extends StatelessWidget {
                           ? AppColors.primaryColor
                           : AppColors.whiteColor,
                   borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Text(
                   categories[index],
