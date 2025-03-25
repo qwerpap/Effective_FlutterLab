@@ -1,0 +1,4 @@
+part of 'categories_list_bloc.dart';
+
+
+abstract class CategoriesListEvent {}

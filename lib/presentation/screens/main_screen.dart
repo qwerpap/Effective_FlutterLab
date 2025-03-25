@@ -1,6 +1,6 @@
 import 'package:effective_flutter_lab/data/repositories/get_products_repository.dart';
 import 'package:flutter/material.dart';
-import '../../data/models/categories_model.dart';
+import '../../data/models/class_categories.dart';
 import '../widgets/widgets.dart';
 
 class MainScreen extends StatefulWidget {
@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GetProductsRepository().getProductsData();
+          GetProductsRepository().getCategoriesTagsList();
         },
       ),
       body: Column(

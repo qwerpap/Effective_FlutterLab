@@ -1,4 +1,4 @@
-import 'package:effective_flutter_lab/ui/app_colors.dart';
+import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 final themeData = ThemeData(
