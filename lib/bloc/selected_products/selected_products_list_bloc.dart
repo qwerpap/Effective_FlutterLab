@@ -1,0 +1,59 @@
+import 'package:effective_flutter_lab/data/models/product_model.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/repositories/abstract_products_api.dart';
+part 'selected_products_list_event.dart';
+part 'selected_products_list_state.dart';
+
+class SelectedProductsListBloc
+    extends Bloc<SelectedProductsListEvent, SelectedProductsListState> {
+  SelectedProductsListBloc(this.categoriesRepository)
+    : super(
+        SelectedProductsListState(
+          products: [],
+          counter: 0,
+        ),
+      ) {
+    on<AddToCategoriesList>(_add);
+    on<ClearCategoriesList>(_clear);
+    on<RemoveFromCategoriesList>(_remove);
+  }
+
+  void _add(
+    AddToCategoriesList event,
+    Emitter<SelectedProductsListState> emit,
+  ) {
+    final newState = state.copyWith(
+      products: List.of(state.products)..add(event.product),
+      counter:
+          state.counter +
+          event.product.prices, 
+    );
+    emit(newState);
+    debugPrint(newState.toString());
+  }
+
+  void _clear(
+    ClearCategoriesList event,
+    Emitter<SelectedProductsListState> emit,
+  ) {
+    emit(SelectedProductsListState(products: [], counter: 0));
+  }
+
+  void _remove(
+    RemoveFromCategoriesList event,
+    Emitter<SelectedProductsListState> emit,
+  ) {
+    final newState = state.copyWith(
+      products: List.of(state.products)
+        ..remove(event.product), 
+      counter:
+          state.counter -
+          event.product.prices,
+    );
+    emit(newState);
+    debugPrint(newState.toString());
+  }
+
+  final AbstractCategoriesAPI categoriesRepository;
+}

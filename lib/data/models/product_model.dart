@@ -17,11 +17,11 @@ class ProductModel {
   @override
   String toString() {
     return 'ProductsModel('
-        'id: $id,'
-        'name: $name,'
-        'description: $description,'
-        'imageUrl: $imageUrl,'
-        'prices: $prices'
+        'id: $id, '
+        'name: $name, '
+        'description: $description, '
+        'imageUrl: $imageUrl, '
+        'prices: $prices '
         ')';
   }
 }

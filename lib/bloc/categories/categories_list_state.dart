@@ -7,9 +7,12 @@ class CategoriesListInitial extends CategoriesListState {}
 class CategoriesListLoading extends CategoriesListState {}
 
 class CategoriesListLoaded extends CategoriesListState {
-  CategoriesListLoaded({required this.productsList});
+  CategoriesListLoaded({required this.categoriesList});
 
-  final List<CategoryModel> productsList;
+  final List<CategoryModel> categoriesList;
 }
 
-class CategoriesListLoadingFailure extends CategoriesListState {}
+class CategoriesListLoadingFailure extends CategoriesListState {
+  CategoriesListLoadingFailure(this.textError);
+  final String textError;
+}
