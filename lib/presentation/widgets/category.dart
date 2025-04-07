@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../theme/app_sizes.dart';
+
 class Category extends StatefulWidget {
   const Category({super.key, required this.data});
 
@@ -16,9 +18,7 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
-  final _productsListBloc = ProductsListBloc(
-    GetIt.I<AbstractCategoriesAPI>(),
-  );
+  final _productsListBloc = ProductsListBloc(GetIt.I<AbstractCategoriesAPI>());
 
   @override
   void initState() {
@@ -33,23 +33,25 @@ class _CategoryState extends State<Category> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(widget.data.slug, style: theme.textTheme.titleLarge),
-        SizedBox(height: 16),
+        SizedBox(height: AppSizes.bottomProductsPadding),
         SizedBox(
-          height: 200,
+          height: AppSizes.productCardHeight,
           child: BlocBuilder(
             bloc: _productsListBloc,
             builder: (context, state) {
               if (state is ProductsListLoaded) {
                 return ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, _) => SizedBox(width: 12),
+                  separatorBuilder:
+                      (context, _) =>
+                          SizedBox(width: AppSizes.horizontalProductsPadding),
                   itemCount: state.productsList.length,
                   itemBuilder:
                       (context, index) =>
                           ProductCard(data: state.productsList[index]),
                 );
               }
-              return SizedBox(height: 180);
+              return SizedBox(height: AppSizes.nullSizedBoxHeight);
             },
           ),
         ),

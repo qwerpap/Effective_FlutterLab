@@ -8,7 +8,7 @@ final themeData = ThemeData(
     color: const Color.fromARGB(255, 255, 244, 244),
     elevation: 0,
   ),
-  scaffoldBackgroundColor: const Color.fromARGB(255, 255, 244, 244),
+  scaffoldBackgroundColor: const Color.fromARGB(255, 247, 240, 240),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: AppColors.primaryColor,

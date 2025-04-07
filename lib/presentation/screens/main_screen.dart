@@ -1,11 +1,14 @@
 import 'package:effective_flutter_lab/bloc/categories/categories_list_bloc.dart';
+import 'package:effective_flutter_lab/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/data/repositories/abstract_products_api.dart';
-import 'package:effective_flutter_lab/presentation/widgets/category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_sizes.dart';
+import '../../theme/app_strings.dart';
+import '../widgets/widgets.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -89,17 +92,17 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  final selected_productsListBloc = GetIt.I<SelectedProductsListBloc>();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: PreferredSize(
-          preferredSize: const Size.fromHeight((36)),
+          preferredSize: Size.fromHeight((AppSizes.appBarHeight)),
           child: SizedBox(
-            height: 36,
+            height: AppSizes.appBarHeight,
             child: BlocBuilder<CategoriesListBloc, CategoriesListState>(
               bloc: _categoriesListBloc,
               builder: (context, state) {
@@ -107,7 +110,10 @@ class _MainScreenState extends State<MainScreen> {
                   return ScrollablePositionedList.separated(
                     scrollDirection: Axis.horizontal,
                     itemScrollController: barItemController,
-                    separatorBuilder: (context, _) => const SizedBox(width: 16),
+                    separatorBuilder:
+                        (context, _) => SizedBox(
+                          width: AppSizes.horizontalCategoriesPadding,
+                        ),
                     itemCount: state.categoriesList.length,
                     itemBuilder:
                         (context, index) => GestureDetector(
@@ -118,14 +124,15 @@ class _MainScreenState extends State<MainScreen> {
                                 barScrollToItem(index),
                               },
                           child: Container(
-                            height: 32,
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.all(AppSizes.containerPadding),
                             decoration: BoxDecoration(
                               color:
                                   current == index
                                       ? AppColors.primaryColor
-                                      : Colors.transparent,
-                              borderRadius: BorderRadius.circular(16),
+                                      : Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.baseBorderRadius,
+                              ),
                             ),
                             alignment: Alignment.center,
                             child: Text(
@@ -153,34 +160,82 @@ class _MainScreenState extends State<MainScreen> {
           if (state is CategoriesListLoaded) {
             listCategoriesLength = state.categoriesList.length;
             return ScrollablePositionedList.separated(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.horizontalProductsPadding,
+              ),
               itemScrollController: itemController,
               itemCount: state.categoriesList.length,
               itemPositionsListener: itemListener,
-              separatorBuilder: (context, _) => SizedBox(height: 16),
+              separatorBuilder:
+                  (context, _) =>
+                      SizedBox(height: AppSizes.bottomProductsPadding),
               itemBuilder:
                   (context, index) =>
                       Category(data: state.categoriesList[index]),
             );
           }
           if (state is CategoriesListLoadingFailure) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('Что-то пошло не так'),
-                TextButton(
-                  onPressed: () {
-                    _categoriesListBloc.add(LoadCategoriesList());
-                  },
-                  child: Text('Попробовать еще раз'),
-                ),
-              ],
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(AppStrings.loadingFailure),
+                  TextButton(
+                    onPressed: () {
+                      _categoriesListBloc.add(LoadCategoriesList());
+                    },
+                    child: Text(AppStrings.tryAgain),
+                  ),
+                ],
+              ),
             );
           }
           return Center(child: CircularProgressIndicator());
         },
       ),
+      floatingActionButton:
+          BlocBuilder<SelectedProductsListBloc, SelectedProductsListState>(
+            bloc: selected_productsListBloc,
+            builder: (context, state) {
+              return state.products.isNotEmpty
+                  ? BaseContainer(
+                    height: 65,
+                    width: 100,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          elevation: 0,
+                          backgroundColor: AppColors.whiteColor,
+                          showDragHandle: true,
+                          builder: (context) => CartBottomSheet(),
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.shopping_cart,
+                            color: AppColors.whiteColor,
+                          ),
+                          SizedBox(height: AppSizes.bottomCartFloatingButtonPadding),
+                          Text(
+                            '${state.counter.toStringAsFixed(2)} ₽',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  : SizedBox();
+            },
+          ),
     );
   }
 }

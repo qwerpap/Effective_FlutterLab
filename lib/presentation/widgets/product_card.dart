@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../bloc/selected_products/selected_products_list_bloc.dart';
 import '../../data/models/product_model.dart';
+import '../../theme/app_sizes.dart';
 import 'base_container.dart';
 
 class ProductCard extends StatefulWidget {
@@ -19,12 +20,6 @@ class _ProductCardState extends State<ProductCard> {
   final _selected_productsListBloc = GetIt.I<SelectedProductsListBloc>();
 
   int _counter = 0;
-
-  // void _addToCart() {
-  //   setState(() {
-  //     _current = 1;
-  //   });
-  // }
 
   void _increment() {
     if (_counter < 10) {
@@ -65,10 +60,12 @@ class _ProductCardState extends State<ProductCard> {
         });
       },
       child: Container(
+        width: 180,
+        height: 196,
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppSizes.baseBorderRadius),
         ),
         child: Column(
           children: [
@@ -80,12 +77,12 @@ class _ProductCardState extends State<ProductCard> {
                   (context, error, stackTrace) =>
                       Icon(Icons.error, size: 100, color: theme.primaryColor),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: AppSizes.productCardVerticalPadding),
             Text(widget.data.name, style: theme.textTheme.bodyLarge),
-            SizedBox(height: 8),
+            SizedBox(height: AppSizes.productCardVerticalPadding),
             SizedBox(
               width: 116,
-              height: 24,
+              height: AppSizes.productCardButtonHeight,
               child:
                   _counter == 0
                       ? Container(
@@ -93,18 +90,20 @@ class _ProductCardState extends State<ProductCard> {
                           color: AppColors.primaryColor,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: TextButton(
-                          onPressed: (_increment),
-                          child: Text(
-                            widget.data.prices.toString(),
-                            style: theme.textTheme.bodySmall,
+                        child: GestureDetector(
+                          onTap: _increment,
+                          child: Center(
+                            child: Text(
+                                '${widget.data.prices.toInt()} руб',
+                                style: theme.textTheme.bodySmall,
+                              ),
                           ),
                         ),
                       )
                       : Row(
                         children: [
                           BaseContainer(
-                            width: 24,
+                            width: AppSizes.productCardButtonHeight,
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               icon: Icon(
@@ -115,10 +114,10 @@ class _ProductCardState extends State<ProductCard> {
                               onPressed: _decrement,
                             ),
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: AppSizes.productCardHorizontalPadding),
                           BaseContainer(
                             width: 52,
-                            height: 24,
+                            height: AppSizes.productCardButtonHeight,
                             child: Center(
                               child: Text(
                                 _counter.toString(),
@@ -126,9 +125,9 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: AppSizes.productCardHorizontalPadding),
                           BaseContainer(
-                            width: 24,
+                            width: AppSizes.productCardButtonHeight,
                             child: Center(
                               child: IconButton(
                                 padding: EdgeInsets.zero,

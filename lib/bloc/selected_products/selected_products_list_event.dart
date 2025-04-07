@@ -13,3 +13,8 @@ class RemoveFromCategoriesList extends SelectedProductsListEvent {
   RemoveFromCategoriesList({required this.product});
   final ProductModel product;
 }
+
+class PostCategoriesList extends SelectedProductsListEvent {
+  PostCategoriesList({required this.context});
+  final BuildContext context;
+}
