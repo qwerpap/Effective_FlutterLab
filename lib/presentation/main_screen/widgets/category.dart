@@ -1,12 +1,11 @@
-import 'package:effective_flutter_lab/bloc/products/products_list_bloc.dart';
 import 'package:effective_flutter_lab/data/models/category_model.dart';
 import 'package:effective_flutter_lab/data/repositories/abstract_products_api.dart';
-import 'package:effective_flutter_lab/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-
-import '../../theme/app_sizes.dart';
+import '../../../theme/app_sizes.dart';
+import '../bloc/products/products_list_bloc.dart';
+import 'product_card.dart';
 
 class Category extends StatefulWidget {
   const Category({super.key, required this.data});

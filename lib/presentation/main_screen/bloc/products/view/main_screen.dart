@@ -1,14 +1,15 @@
-import 'package:effective_flutter_lab/bloc/categories/categories_list_bloc.dart';
-import 'package:effective_flutter_lab/bloc/selected_products/selected_products_list_bloc.dart';
+
 import 'package:effective_flutter_lab/data/repositories/abstract_products_api.dart';
+import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_sizes.dart';
-import '../../theme/app_strings.dart';
-import '../widgets/widgets.dart';
+import '../../../../../theme/app_sizes.dart';
+import '../../../../../theme/app_strings.dart';
+import '../../categories/categories_list_bloc.dart';
+import '../../../widgets/widgets.dart';
+import '../../selected_products/selected_products_list_bloc.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

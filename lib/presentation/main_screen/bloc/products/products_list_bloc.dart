@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/product_model.dart';
-import '../../data/repositories/abstract_products_api.dart';
+import '../../../../data/models/product_model.dart';
+import '../../../../data/repositories/abstract_products_api.dart';
 part 'products_list_event.dart';
 part 'products_list_state.dart';
 
