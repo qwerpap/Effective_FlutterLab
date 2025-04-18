@@ -1,10 +1,10 @@
-import 'package:effective_flutter_lab/bloc/selected_products/selected_products_list_bloc.dart';
-import 'package:effective_flutter_lab/presentation/widgets/widgets.dart';
 import 'package:effective_flutter_lab/theme/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import '../../theme/app_strings.dart';
+import '../../../theme/app_strings.dart';
+import '../bloc/selected_products/selected_products_list_bloc.dart';
+import 'selected_product.dart';
 
 class CartBottomSheet extends StatefulWidget {
   const CartBottomSheet({super.key});
@@ -35,17 +35,24 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       AppStrings.cartOrder,
                       style: theme.textTheme.titleLarge,
                     ),
-                    SizedBox(
-                      height: AppSizes.trashIconSize,
-                      width: AppSizes.trashIconSize,
-                      child: IconButton(
-                        onPressed: () {
-                          _selected_productsListBloc.add(ClearCategoriesList());
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.remove_shopping_cart_rounded,
-                          color: Colors.red,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSizes.baseHorizontalPadding,
+                      ),
+                      child: SizedBox(
+                        height: AppSizes.trashIconSize,
+                        width: AppSizes.trashIconSize,
+                        child: IconButton(
+                          onPressed: () {
+                            _selected_productsListBloc.add(
+                              ClearCategoriesList(),
+                            );
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.remove_shopping_cart_rounded,
+                            color: Colors.red,
+                          ),
                         ),
                       ),
                     ),
@@ -88,6 +95,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                     ),
                   ),
                 ),
+                SizedBox(height: 16),
               ],
             ),
           ),

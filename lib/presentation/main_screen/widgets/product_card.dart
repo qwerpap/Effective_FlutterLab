@@ -72,7 +72,7 @@ class _ProductCardState extends State<ProductCard> {
             Image.network(
               widget.data.imageUrl,
               height: 100,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
               errorBuilder:
                   (context, error, stackTrace) =>
                       Icon(Icons.error, size: 100, color: theme.primaryColor),
