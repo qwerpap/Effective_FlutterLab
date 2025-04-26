@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,17 +65,23 @@ class _ProductCardState extends State<ProductCard> {
         height: 196,
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(AppSizes.baseBorderRadius),
         ),
         child: Column(
           children: [
-            Image.network(
-              widget.data.imageUrl,
+            CachedNetworkImage(
+              imageUrl: widget.data.imageUrl,
               height: 100,
               fit: BoxFit.cover,
-              errorBuilder:
-                  (context, error, stackTrace) =>
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Center(
+                    child: CircularProgressIndicator(
+                      value: downloadProgress.progress,
+                    ),
+                  ),
+              errorWidget:
+                  (context, url, error) =>
                       Icon(Icons.error, size: 100, color: theme.primaryColor),
             ),
             SizedBox(height: AppSizes.productCardVerticalPadding),
@@ -94,9 +101,9 @@ class _ProductCardState extends State<ProductCard> {
                           onTap: _increment,
                           child: Center(
                             child: Text(
-                                '${widget.data.prices.toInt()} руб',
-                                style: theme.textTheme.bodySmall,
-                              ),
+                              '${widget.data.prices.toInt()} руб',
+                              style: theme.textTheme.bodySmall,
+                            ),
                           ),
                         ),
                       )
@@ -108,13 +115,15 @@ class _ProductCardState extends State<ProductCard> {
                               padding: EdgeInsets.zero,
                               icon: Icon(
                                 Icons.remove,
-                                color: Colors.white,
+                                color: AppColors.whiteColor,
                                 size: 16,
                               ),
                               onPressed: _decrement,
                             ),
                           ),
-                          SizedBox(width: AppSizes.productCardHorizontalPadding),
+                          SizedBox(
+                            width: AppSizes.productCardHorizontalPadding,
+                          ),
                           BaseContainer(
                             width: 52,
                             height: AppSizes.productCardButtonHeight,
@@ -125,7 +134,9 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ),
                           ),
-                          SizedBox(width: AppSizes.productCardHorizontalPadding),
+                          SizedBox(
+                            width: AppSizes.productCardHorizontalPadding,
+                          ),
                           BaseContainer(
                             width: AppSizes.productCardButtonHeight,
                             child: Center(
@@ -133,7 +144,7 @@ class _ProductCardState extends State<ProductCard> {
                                 padding: EdgeInsets.zero,
                                 icon: Icon(
                                   Icons.add,
-                                  color: Colors.white,
+                                  color: AppColors.whiteColor,
                                   size: 16,
                                 ),
                                 onPressed: _increment,

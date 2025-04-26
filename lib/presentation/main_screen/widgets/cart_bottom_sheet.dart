@@ -1,3 +1,4 @@
+import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:effective_flutter_lab/theme/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,25 +36,16 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       AppStrings.cartOrder,
                       style: theme.textTheme.titleLarge,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppSizes.baseHorizontalPadding,
-                      ),
-                      child: SizedBox(
-                        height: AppSizes.trashIconSize,
-                        width: AppSizes.trashIconSize,
-                        child: IconButton(
-                          onPressed: () {
-                            _selected_productsListBloc.add(
-                              ClearCategoriesList(),
-                            );
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.remove_shopping_cart_rounded,
-                            color: Colors.red,
-                          ),
-                        ),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(),
+                      onPressed: () {
+                        _selected_productsListBloc.add(ClearCategoriesList());
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.remove_shopping_cart_rounded,
+                        color: AppColors.redColor,
                       ),
                     ),
                   ],
@@ -91,7 +83,9 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                     },
                     child: Text(
                       AppStrings.placeOrder,
-                      style: theme.textTheme.bodyLarge,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.whiteColor,
+                      ),
                     ),
                   ),
                 ),

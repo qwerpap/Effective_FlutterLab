@@ -1,25 +1,23 @@
-
 import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../../../../theme/app_sizes.dart';
-import '../../../../../theme/app_strings.dart';
-import '../../categories/categories_list_bloc.dart';
-import '../../../widgets/widgets.dart';
-import '../../selected_products/selected_products_list_bloc.dart';
+import '../../../theme/app_sizes.dart';
+import '../../../theme/app_strings.dart';
+import '../bloc/categories/categories_list_bloc.dart';
+import '../widgets/widgets.dart';
+import '../bloc/selected_products/selected_products_list_bloc.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   final itemListener = ItemPositionsListener.create();
 
   bool animation = false;
@@ -51,9 +49,7 @@ class _MainScreenState extends State<MainScreen> {
 
   bool onBottom = false;
 
-  final _categoriesListBloc = CategoriesListBloc(
-    GetIt.I<AbstractMenuAPI>(),
-  );
+  final _categoriesListBloc = CategoriesListBloc(GetIt.I<AbstractMenuAPI>());
   int listCategoriesLength = 0;
   @override
   void initState() {
@@ -130,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
                               color:
                                   current == index
                                       ? AppColors.primaryColor
-                                      : Colors.white,
+                                      : AppColors.whiteColor,
                               borderRadius: BorderRadius.circular(
                                 AppSizes.baseBorderRadius,
                               ),
@@ -195,48 +191,47 @@ class _MainScreenState extends State<MainScreen> {
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton:
-          BlocBuilder<SelectedProductsListBloc, SelectedProductsListState>(
-            bloc: selected_productsListBloc,
-            builder: (context, state) {
-              return state.products.isNotEmpty
-                  ? BaseContainer(
-                    height: 65,
-                    width: 100,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      floatingActionButton: BlocBuilder<
+        SelectedProductsListBloc,
+        SelectedProductsListState
+      >(
+        bloc: selected_productsListBloc,
+        builder: (context, state) {
+          return state.products.isNotEmpty
+              ? BaseContainer(
+                height: 65,
+                width: 120,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      elevation: 0,
+                      backgroundColor: AppColors.whiteColor,
+                      showDragHandle: true,
+                      builder: (context) => CartBottomSheet(),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_cart, color: AppColors.whiteColor),
+                      SizedBox(width: AppSizes.bottomCartFloatingButtonPadding),
+                      Text(
+                        '${state.counter.toStringAsFixed(2)} ₽',
+                        style: theme.textTheme.bodySmall,
                       ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          elevation: 0,
-                          backgroundColor: AppColors.whiteColor,
-                          showDragHandle: true,
-                          builder: (context) => CartBottomSheet(),
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.shopping_cart,
-                            color: AppColors.whiteColor,
-                          ),
-                          SizedBox(height: AppSizes.bottomCartFloatingButtonPadding),
-                          Text(
-                            '${state.counter.toStringAsFixed(2)} ₽',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  : SizedBox();
-            },
-          ),
+                    ],
+                  ),
+                ),
+              )
+              : SizedBox();
+        },
+      ),
     );
   }
 }

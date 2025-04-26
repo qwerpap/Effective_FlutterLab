@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:effective_flutter_lab/data/repositories/abstract_products_api.dart';
+import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
 import '../models/category_model.dart';
 import '../models/product_model.dart';
 
-class GetProductsRepository implements AbstractCategoriesAPI {
+class GetProductsRepository implements AbstractMenuAPI {
   GetProductsRepository({required this.dio});
   final Dio dio;
 
   @override
   Future<List<CategoryModel>> getCategoriesList() async {
     final Response<dynamic> categoriesResponse = await dio.get(
-      'https://coffeeshop.academy.effective.band/api/v1/products/categories?page=0&limit=25',
+      'https://coffeeshop.academy.effective.band/api/v1/products/categories?page=0&limit=50',
     );
     final data = categoriesResponse.data;
 
@@ -30,7 +30,7 @@ class GetProductsRepository implements AbstractCategoriesAPI {
   @override
   Future<List<ProductModel>> getProductsByCategoryList(int id) async {
     final Response<dynamic> productsResponse = await dio.get(
-      'https://coffeeshop.academy.effective.band/api/v1/products?page=0&limit=20&category=$id',
+      'https://coffeeshop.academy.effective.band/api/v1/products?page=0&limit=50&category=$id',
     );
     final data = productsResponse.data;
 
