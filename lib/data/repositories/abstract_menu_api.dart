@@ -6,3 +6,4 @@ abstract class AbstractMenuAPI {
   Future<List<ProductModel>> getProductsByCategoryList(int id);
   Future<bool> postProductsList(List<ProductModel> products); 
 }
+

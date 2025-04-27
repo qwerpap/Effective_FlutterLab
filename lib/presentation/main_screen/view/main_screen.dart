@@ -1,14 +1,14 @@
 import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
-import 'package:effective_flutter_lab/theme/app_colors.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../../theme/app_sizes.dart';
-import '../../../theme/app_strings.dart';
-import '../bloc/categories/categories_list_bloc.dart';
-import '../widgets/widgets.dart';
-import '../bloc/selected_products/selected_products_list_bloc.dart';
+import 'package:effective_flutter_lab/theme/app_colors.dart';
+import 'package:effective_flutter_lab/theme/app_sizes.dart';
+import 'package:effective_flutter_lab/theme/app_strings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -200,7 +200,7 @@ class MainScreenState extends State<MainScreen> {
           return state.products.isNotEmpty
               ? BaseContainer(
                 height: 65,
-                width: 120,
+                width: 100,
                 child: TextButton(
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,

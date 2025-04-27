@@ -1,89 +1,92 @@
-// import 'dart:developer' as developer;
-// import 'package:drift/drift.dart';
-// import 'package:effective_flutter_lab/data/models/category_model.dart';
-// import 'package:effective_flutter_lab/data/models/product_model.dart';
-// import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
-// import 'package:effective_flutter_lab/database/categories_database.dart';
-// import 'package:effective_flutter_lab/database/products_database.dart';
-// import 'package:get_it/get_it.dart';
+import 'dart:developer' as developer;
+import 'package:drift/drift.dart';
+import 'package:effective_flutter_lab/data/models/category_model.dart';
+import 'package:effective_flutter_lab/data/models/product_model.dart';
+import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
+import 'package:effective_flutter_lab/database/categories_database.dart';
+import 'package:effective_flutter_lab/database/products_database.dart';
+import 'package:get_it/get_it.dart';
 
-// class MenuCategoriesDataBase implements AbstractMenuAPI {
-//   final CategoriesDatabase CategoriesDB = GetIt.I<CategoriesDatabase>();
-//   final ProductsDatabase ProductsDB = GetIt.I<ProductsDatabase>();
+class MenuCategoriesDataBase implements AbstractMenuAPI {
+  final CategoriesDatabase categoriesDB = GetIt.I<CategoriesDatabase>();
+  final ProductsDatabase productsDB = GetIt.I<ProductsDatabase>();
 
-//   void saveCategoriesToDB(List<CategoryModel> slugs) async {
-//     await CategoriesDB.delete(CategoriesDB.categoriesItems).go();
-//     slugs.forEach((slug) async {
-//       developer.log('saving Category', name: 'DB');
-//       //await CategoriesDB.update(CategoriesDB.categoriesItems).write(
-//       await CategoriesDB.into(CategoriesDB.categoriesItems).insert(
-//         CategoriesItemsCompanion.insert(
-//           id: Value(slug.id),
-//           slug: slug.slug,
-//         ),
-//       );
-//       developer.log('Category saved', name: 'DB');
-//     });
-//   }
+  Future<void> saveCategoriesToDB(List<CategoryModel> slugs) async {
+    await categoriesDB.delete(categoriesDB.categoriesItems).go();
+    for (final slug in slugs) {
+      await categoriesDB
+          .into(categoriesDB.categoriesItems)
+          .insert(
+            CategoriesItemsCompanion.insert(
+              id: Value(slug.id),
+              slug: slug.slug,
+            ),
+          );
+      developer.log('category saved', name: 'DB');
+    }
+  }
 
-//   void saveProductsToDB(List<ProductModel> cards, int categoryID) async {
-//     await (ProductsDB.delete(ProductsDB.productsItems)
-//       ..where((t) => t.categoryID.equals(categoryID))).go();
-//     cards.forEach((product) async {
-//       developer.log('saving Product', name: 'DB');
-//       await ProductsDB.into(ProductsDB.productsItems).insert(
-//         ProductsItemsCompanion.insert(
-//           id: product.id,
-//           imageUrl: product.imageUrl,
-//           name: product.name,
-//           description: product.description,
-//           priceType: product.prices.toString(),
-//           categoryID: categoryID,
-//         ),
-//       );
-//       developer.log('Product saved', name: 'DB');
-//     });
-//   }
+  Future<void> saveProductsToDB(
+    List<ProductModel> products,
+    int categoryID,
+  ) async {
+    await (productsDB.delete(productsDB.productsItems)
+      ..where((t) => t.categoryID.equals(categoryID))).go();
 
-//   @override
-//   Future<List<CategoryModel>> getCategoriesList() async {
-//     developer.log('start getTags', name: 'DB');
+    for (final product in products) {
+      developer.log('saving product', name: 'DB');
+      await productsDB
+          .into(productsDB.productsItems)
+          .insert(
+            ProductsItemsCompanion.insert(
+              id: product.id,
+              imageUrl: product.imageUrl,
+              name: product.name,
+              description: product.description,
+              price: product.prices.toString(),
+              categoryID: categoryID,
+            ),
+          );
+      developer.log('Product saved', name: 'DB');
+    }
+  }
 
-//     List<CategoriesItem> dbCategories =
-//         await CategoriesDB.select(CategoriesDB.categoriesItems).get();
+  @override
+  Future<List<CategoryModel>> getCategoriesList() async {
+    List<CategoriesItem> dbCategories =
+        await categoriesDB.select(categoriesDB.categoriesItems).get();
 
-//     List<CategoryModel> rawCategories =
-//         dbCategories.map((category) {
-//           return CategoryModel(id: category.id, slug: category.slug);
-//         }).toList();
-//     developer.log('return', name: 'DB');
-//     return rawCategories;
-//   }
+    List<CategoryModel> rawCategories =
+        dbCategories.map((category) {
+          return CategoryModel(id: category.id, slug: category.slug);
+        }).toList();
+    return rawCategories;
+  }
 
-//   @override
-//   Future<List<ProductModel>> getProductsByCategoryList(int id) async {
-//     developer.log('start get ProductsByCategory', name: 'DB');
-//     List<ProductsItem> dbProducts =
-//         await (ProductsDB.select(ProductsDB.productsItems)
-//           ..where((p) => p.categoryID.equals(id))).get();
+  @override
+  Future<List<ProductModel>> getProductsByCategoryList(int id) async {
+    developer.log('start getProductsByCategoryList');
+    List<ProductsItem> dbProducts =
+        await (productsDB.select(productsDB.productsItems)
+          ..where((p) => p.categoryID.equals(id))).get();
 
-//     List<ProductModel> productsByCategoryID =
-//         dbProducts.map((product) {
-//           return ProductModel(
-//             id: product.id,
-//             imageUrl: product.imageUrl,
-//             name: product.name,
-//             description: product.description,
-//             prices: double.parse(product.priceType.toString()),
-//           );
-//         }).toList();
+    List<ProductModel> productsByCategoryID =
+        dbProducts.map((product) {
+          return ProductModel(
+            id: product.id,
+            imageUrl: product.imageUrl,
+            name: product.name,
+            description: product.description,
+            prices: double.parse(product.price.toString()),
+          );
+        }).toList();
 
-//     return productsByCategoryID;
-//   }
+    return productsByCategoryID;
+  }
 
-//   @override
-//   Future<bool> postProductsList(List<ProductModel> cards) async {
-//     developer.log('Post Start', name: 'DB');
-//     return false;
-//   }
-// }
+  @override
+  Future<bool> postProductsList(List<ProductModel> cards) async {
+    developer.log('post start', name: 'DB');
+    return false;
+  }
+}
