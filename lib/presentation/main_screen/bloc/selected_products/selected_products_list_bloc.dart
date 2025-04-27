@@ -32,6 +32,7 @@ class SelectedProductsListBloc
     ClearCategoriesList event,
     Emitter<SelectedProductsListState> emit,
   ) {
+    debugPrint('Очистка корзины');
     emit(SelectedProductsListState(products: [], counter: 0));
   }
 

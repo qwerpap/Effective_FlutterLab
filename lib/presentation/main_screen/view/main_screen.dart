@@ -1,4 +1,3 @@
-import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
@@ -8,7 +7,6 @@ import 'package:effective_flutter_lab/theme/app_sizes.dart';
 import 'package:effective_flutter_lab/theme/app_strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,16 +17,19 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   final itemListener = ItemPositionsListener.create();
-
   bool animation = false;
   int current = 0;
+  bool onBottom = false;
+  int listCategoriesLength = 0;
+  final itemController = ItemScrollController();
+  final barItemController = ItemScrollController();
+
   void setCurrent(int newCurrent) {
     setState(() {
       current = newCurrent;
     });
   }
 
-  final itemController = ItemScrollController();
   void scrollToItem(int ind) async {
     animation = true;
     itemController.scrollTo(
@@ -39,7 +40,6 @@ class MainScreenState extends State<MainScreen> {
     animation = false;
   }
 
-  final barItemController = ItemScrollController();
   void barScrollToItem(int ind) async {
     barItemController.scrollTo(
       index: ind,
@@ -47,15 +47,9 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
-  bool onBottom = false;
-
-  final _categoriesListBloc = CategoriesListBloc(GetIt.I<AbstractMenuAPI>());
-  int listCategoriesLength = 0;
   @override
   void initState() {
     super.initState();
-
-    _categoriesListBloc.add(LoadCategoriesList());
 
     itemListener.itemPositions.addListener(() {
       final fullVisible =
@@ -68,40 +62,35 @@ class MainScreenState extends State<MainScreen> {
               .map((item) => item.index)
               .toList();
 
-      if (fullVisible.length == 2) {
-        if ((fullVisible[1] == listCategoriesLength - 1) && animation != true) {
-          if (fullVisible[1] != current) {
-            onBottom = true;
-            setCurrent(fullVisible[1]);
-            barScrollToItem(fullVisible[1]);
-          }
-        } else
-          onBottom = false;
-      } else
-        onBottom = false;
       if (fullVisible.isNotEmpty) {
-        if (((fullVisible[0] != current) && animation != true) &&
-            onBottom == false) {
-          setCurrent(fullVisible[0]);
-          barScrollToItem(fullVisible[0]);
+        final newCurrent = fullVisible[0];
+        if (newCurrent != current && !animation) {
+          setCurrent(newCurrent);
+          barScrollToItem(newCurrent);
+        }
+        if (fullVisible.length == 2 &&
+            fullVisible[1] == listCategoriesLength - 1 &&
+            !animation) {
+          setCurrent(fullVisible[1]);
+          barScrollToItem(fullVisible[1]);
         }
       }
     });
   }
 
-  final selected_productsListBloc = GetIt.I<SelectedProductsListBloc>();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final categoriesListBloc = context.read<CategoriesListBloc>();
+    final selectedProductsListBloc = context.read<SelectedProductsListBloc>();
+
     return Scaffold(
       appBar: AppBar(
         title: PreferredSize(
-          preferredSize: Size.fromHeight((AppSizes.appBarHeight)),
+          preferredSize: Size.fromHeight(AppSizes.appBarHeight),
           child: SizedBox(
             height: AppSizes.appBarHeight,
             child: BlocBuilder<CategoriesListBloc, CategoriesListState>(
-              bloc: _categoriesListBloc,
               builder: (context, state) {
                 if (state is CategoriesListLoaded) {
                   return ScrollablePositionedList.separated(
@@ -114,12 +103,11 @@ class MainScreenState extends State<MainScreen> {
                     itemCount: state.categoriesList.length,
                     itemBuilder:
                         (context, index) => GestureDetector(
-                          onTap:
-                              () => {
-                                setCurrent(index),
-                                scrollToItem(index),
-                                barScrollToItem(index),
-                              },
+                          onTap: () {
+                            setCurrent(index);
+                            scrollToItem(index);
+                            barScrollToItem(index);
+                          },
                           child: Container(
                             padding: EdgeInsets.all(AppSizes.containerPadding),
                             decoration: BoxDecoration(
@@ -151,8 +139,7 @@ class MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      body: BlocBuilder(
-        bloc: _categoriesListBloc,
+      body: BlocBuilder<CategoriesListBloc, CategoriesListState>(
         builder: (context, state) {
           if (state is CategoriesListLoaded) {
             listCategoriesLength = state.categoriesList.length;
@@ -175,30 +162,28 @@ class MainScreenState extends State<MainScreen> {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppStrings.loadingFailure),
+                  const Text(AppStrings.loadingFailure),
                   TextButton(
                     onPressed: () {
-                      _categoriesListBloc.add(LoadCategoriesList());
+                      categoriesListBloc.add(LoadCategoriesList());
                     },
-                    child: Text(AppStrings.tryAgain),
+                    child: const Text(AppStrings.tryAgain),
                   ),
                 ],
               ),
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: BlocBuilder<
-        SelectedProductsListBloc,
-        SelectedProductsListState
-      >(
-        bloc: selected_productsListBloc,
-        builder: (context, state) {
-          return state.products.isNotEmpty
-              ? BaseContainer(
+      floatingActionButton:
+          BlocBuilder<SelectedProductsListBloc, SelectedProductsListState>(
+            builder: (context, state) {
+              if (state.products.isEmpty) {
+                return const SizedBox();
+              }
+              return BaseContainer(
                 height: 65,
                 width: 100,
                 child: TextButton(
@@ -213,13 +198,16 @@ class MainScreenState extends State<MainScreen> {
                       elevation: 0,
                       backgroundColor: AppColors.whiteColor,
                       showDragHandle: true,
-                      builder: (context) => CartBottomSheet(),
+                      builder: (context) => const CartBottomSheet(),
                     );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.shopping_cart, color: AppColors.whiteColor),
+                      const Icon(
+                        Icons.shopping_cart,
+                        color: AppColors.whiteColor,
+                      ),
                       SizedBox(width: AppSizes.bottomCartFloatingButtonPadding),
                       Text(
                         '${state.counter.toStringAsFixed(2)} ₽',
@@ -228,9 +216,106 @@ class MainScreenState extends State<MainScreen> {
                     ],
                   ),
                 ),
-              )
-              : SizedBox();
-        },
+              );
+            },
+          ),
+    );
+  }
+}
+
+class CartBottomSheet extends StatelessWidget {
+  const CartBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return BlocListener<SelectedProductsListBloc, SelectedProductsListState>(
+      listener: (context, state) {
+        if (state.products.isEmpty) {
+          Navigator.pop(context);
+        }
+      },
+      child: DraggableScrollableSheet(
+        initialChildSize: AppSizes.initialChildSize,
+        builder:
+            (_, controller) => Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.baseHorizontalPadding,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppStrings.cartOrder,
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      BlocBuilder<
+                        SelectedProductsListBloc,
+                        SelectedProductsListState
+                      >(
+                        builder: (context, state) {
+                          return IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              context.read<SelectedProductsListBloc>().add(
+                                ClearCategoriesList(),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.remove_shopping_cart_rounded,
+                              color: AppColors.redColor,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppSizes.bottomCartPadding),
+                  const Divider(),
+                  SizedBox(height: AppSizes.bottomCartPadding),
+                  Expanded(
+                    child: BlocBuilder<
+                      SelectedProductsListBloc,
+                      SelectedProductsListState
+                    >(
+                      builder: (context, state) {
+                        return state.products.isNotEmpty
+                            ? ListView.builder(
+                              itemCount: state.products.length,
+                              itemBuilder:
+                                  (context, index) => SelectedProduct(
+                                    data: state.products[index],
+                                  ),
+                            )
+                            : const SizedBox();
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: AppSizes.postButtonHeight,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<SelectedProductsListBloc>().add(
+                          PostCategoriesList(context: context),
+                        );
+                      },
+                      child: Text(
+                        AppStrings.placeOrder,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
       ),
     );
   }

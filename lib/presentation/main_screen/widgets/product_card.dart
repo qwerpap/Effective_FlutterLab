@@ -23,7 +23,8 @@ class ProductCard extends StatelessWidget {
       child: Builder(
         builder: (context) {
           final counterBloc = context.read<ProductCounterBloc>();
-          final selectedProductsListBloc = GetIt.I<SelectedProductsListBloc>();
+          final selectedProductsListBloc =
+              context.read<SelectedProductsListBloc>();
 
           return BlocListener<ProductCounterBloc, ProductCounterState>(
             listenWhen:
