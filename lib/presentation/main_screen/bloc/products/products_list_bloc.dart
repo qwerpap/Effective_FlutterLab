@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../data/models/product_model.dart';
-import '../../../../data/repositories/abstract_products_api.dart';
+import '../../../../data/repositories/abstract_menu_api.dart';
 part 'products_list_event.dart';
 part 'products_list_state.dart';
 
@@ -10,16 +10,14 @@ class ProductsListBloc extends Bloc<ProductsListEvent, ProductsListState> {
     on<LoadProductsList>(_load);
   }
 
-  final AbstractCategoriesAPI categoriesRepository;
+  final AbstractMenuAPI categoriesRepository;
 
   Future<void> _load(
     LoadProductsList event,
     Emitter<ProductsListState> emit,
   ) async {
+    emit(ProductsListLoading());
     try {
-      if (state is! ProductsListLoaded) {
-        emit(ProductsListLoading());
-      }
       final productsList = await categoriesRepository.getProductsByCategoryList(
         event.categoryId,
       );

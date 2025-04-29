@@ -1,36 +1,35 @@
-
-import 'package:effective_flutter_lab/data/repositories/abstract_products_api.dart';
-import 'package:effective_flutter_lab/theme/app_colors.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../../../../theme/app_sizes.dart';
-import '../../../../../theme/app_strings.dart';
-import '../../categories/categories_list_bloc.dart';
-import '../../../widgets/widgets.dart';
-import '../../selected_products/selected_products_list_bloc.dart';
+import 'package:effective_flutter_lab/theme/app_colors.dart';
+import 'package:effective_flutter_lab/theme/app_sizes.dart';
+import 'package:effective_flutter_lab/theme/app_strings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   final itemListener = ItemPositionsListener.create();
-
   bool animation = false;
   int current = 0;
+  bool onBottom = false;
+  int listCategoriesLength = 0;
+  final itemController = ItemScrollController();
+  final barItemController = ItemScrollController();
+
   void setCurrent(int newCurrent) {
     setState(() {
       current = newCurrent;
     });
   }
 
-  final itemController = ItemScrollController();
   void scrollToItem(int ind) async {
     animation = true;
     itemController.scrollTo(
@@ -41,7 +40,6 @@ class _MainScreenState extends State<MainScreen> {
     animation = false;
   }
 
-  final barItemController = ItemScrollController();
   void barScrollToItem(int ind) async {
     barItemController.scrollTo(
       index: ind,
@@ -49,17 +47,9 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  bool onBottom = false;
-
-  final _categoriesListBloc = CategoriesListBloc(
-    GetIt.I<AbstractCategoriesAPI>(),
-  );
-  int listCategoriesLength = 0;
   @override
   void initState() {
     super.initState();
-
-    _categoriesListBloc.add(LoadCategoriesList());
 
     itemListener.itemPositions.addListener(() {
       final fullVisible =
@@ -72,40 +62,34 @@ class _MainScreenState extends State<MainScreen> {
               .map((item) => item.index)
               .toList();
 
-      if (fullVisible.length == 2) {
-        if ((fullVisible[1] == listCategoriesLength - 1) && animation != true) {
-          if (fullVisible[1] != current) {
-            onBottom = true;
-            setCurrent(fullVisible[1]);
-            barScrollToItem(fullVisible[1]);
-          }
-        } else
-          onBottom = false;
-      } else
-        onBottom = false;
       if (fullVisible.isNotEmpty) {
-        if (((fullVisible[0] != current) && animation != true) &&
-            onBottom == false) {
-          setCurrent(fullVisible[0]);
-          barScrollToItem(fullVisible[0]);
+        final newCurrent = fullVisible[0];
+        if (newCurrent != current && !animation) {
+          setCurrent(newCurrent);
+          barScrollToItem(newCurrent);
+        }
+        if (fullVisible.length == 2 &&
+            fullVisible[1] == listCategoriesLength - 1 &&
+            !animation) {
+          setCurrent(fullVisible[1]);
+          barScrollToItem(fullVisible[1]);
         }
       }
     });
   }
 
-  final selected_productsListBloc = GetIt.I<SelectedProductsListBloc>();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final categoriesListBloc = context.read<CategoriesListBloc>();
+    final selectedProductsListBloc = context.read<SelectedProductsListBloc>();
     return Scaffold(
       appBar: AppBar(
         title: PreferredSize(
-          preferredSize: Size.fromHeight((AppSizes.appBarHeight)),
+          preferredSize: Size.fromHeight(AppSizes.appBarHeight),
           child: SizedBox(
             height: AppSizes.appBarHeight,
             child: BlocBuilder<CategoriesListBloc, CategoriesListState>(
-              bloc: _categoriesListBloc,
               builder: (context, state) {
                 if (state is CategoriesListLoaded) {
                   return ScrollablePositionedList.separated(
@@ -118,19 +102,18 @@ class _MainScreenState extends State<MainScreen> {
                     itemCount: state.categoriesList.length,
                     itemBuilder:
                         (context, index) => GestureDetector(
-                          onTap:
-                              () => {
-                                setCurrent(index),
-                                scrollToItem(index),
-                                barScrollToItem(index),
-                              },
+                          onTap: () {
+                            setCurrent(index);
+                            scrollToItem(index);
+                            barScrollToItem(index);
+                          },
                           child: Container(
                             padding: EdgeInsets.all(AppSizes.containerPadding),
                             decoration: BoxDecoration(
                               color:
                                   current == index
                                       ? AppColors.primaryColor
-                                      : Colors.white,
+                                      : AppColors.whiteColor,
                               borderRadius: BorderRadius.circular(
                                 AppSizes.baseBorderRadius,
                               ),
@@ -155,8 +138,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      body: BlocBuilder(
-        bloc: _categoriesListBloc,
+      body: BlocBuilder<CategoriesListBloc, CategoriesListState>(
         builder: (context, state) {
           if (state is CategoriesListLoaded) {
             listCategoriesLength = state.categoriesList.length;
@@ -179,62 +161,61 @@ class _MainScreenState extends State<MainScreen> {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppStrings.loadingFailure),
+                  const Text(AppStrings.loadingFailure),
                   TextButton(
                     onPressed: () {
-                      _categoriesListBloc.add(LoadCategoriesList());
+                      categoriesListBloc.add(LoadCategoriesList());
                     },
-                    child: Text(AppStrings.tryAgain),
+                    child: const Text(AppStrings.tryAgain),
                   ),
                 ],
               ),
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton:
           BlocBuilder<SelectedProductsListBloc, SelectedProductsListState>(
-            bloc: selected_productsListBloc,
             builder: (context, state) {
-              return state.products.isNotEmpty
-                  ? BaseContainer(
-                    height: 65,
-                    width: 100,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              if (state.products.isEmpty) {
+                return const SizedBox();
+              }
+              return BaseContainer(
+                height: 65,
+                width: 100,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      elevation: 0,
+                      backgroundColor: AppColors.whiteColor,
+                      showDragHandle: true,
+                      builder: (context) => const CartBottomSheet(),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.shopping_cart,
+                        color: AppColors.whiteColor,
                       ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          elevation: 0,
-                          backgroundColor: AppColors.whiteColor,
-                          showDragHandle: true,
-                          builder: (context) => CartBottomSheet(),
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.shopping_cart,
-                            color: AppColors.whiteColor,
-                          ),
-                          SizedBox(height: AppSizes.bottomCartFloatingButtonPadding),
-                          Text(
-                            '${state.counter.toStringAsFixed(2)} ₽',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
+                      SizedBox(width: AppSizes.bottomCartFloatingButtonPadding),
+                      Text(
+                        '${state.counter.toStringAsFixed(2)} ₽',
+                        style: theme.textTheme.bodySmall,
                       ),
-                    ),
-                  )
-                  : SizedBox();
+                    ],
+                  ),
+                ),
+              );
             },
           ),
     );

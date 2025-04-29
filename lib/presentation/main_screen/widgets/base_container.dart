@@ -8,19 +8,20 @@ class BaseContainer extends StatelessWidget {
     required this.child,
     this.width,
     this.height,
-    this.onPressed,
+    this.padding,
   });
 
   final Widget child;
   final double? width;
   final double? height;
-  final VoidCallback? onPressed;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width,
       height: height,
+      padding: padding,
       decoration: BoxDecoration(
         color: AppColors.primaryColor,
         borderRadius: BorderRadius.circular(AppSizes.baseBorderRadius),

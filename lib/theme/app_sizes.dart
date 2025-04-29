@@ -17,6 +17,6 @@ class AppSizes {
   static final double initialChildSize = 0.9;
   static final double trashIconSize = 8;
   static final double postButtonHeight = 55;
-  static final double bottomCartFloatingButtonPadding = 2;
+  static final double bottomCartFloatingButtonPadding = 4;
   static final double bottomCartPadding = 5;
 }
