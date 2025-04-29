@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.0-91.0.dev
+  sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -16,8 +16,7 @@ dependencies:
   flutter_bloc: ^9.1.0
   get_it: ^8.0.3
   cached_network_image: ^3.4.1
-  drift: ^2.26.0
-  drift_flutter: ^0.2.4
+  drift: ^2.15.0
   sqlite3_flutter_libs: ^0.5.32
   path_provider: ^2.1.5
 
@@ -27,7 +26,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
-  drift_dev: ^2.26.0
+  drift_dev: ^2.15.0
   build_runner: ^2.4.15
 
 flutter:
