@@ -1,5 +1,5 @@
 import 'package:effective_flutter_lab/data/models/category_model.dart';
-import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
+import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -31,7 +31,10 @@ class _CategoryState extends State<Category> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.data.slug, style: theme.textTheme.titleLarge),
+        Padding(
+          padding: const EdgeInsets.only(top: 10), //hm
+          child: Text(widget.data.slug, style: theme.textTheme.titleLarge),
+        ),
         SizedBox(height: AppSizes.bottomProductsPadding),
         SizedBox(
           height: AppSizes.productCardHeight,

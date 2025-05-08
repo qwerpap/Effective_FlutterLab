@@ -2,7 +2,7 @@ import 'package:effective_flutter_lab/data/models/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../data/repositories/abstract_menu_api.dart';
+import '../../../../data/repositories/menu_categories/abstract_menu_api.dart';
 part 'selected_products_list_event.dart';
 part 'selected_products_list_state.dart';
 
