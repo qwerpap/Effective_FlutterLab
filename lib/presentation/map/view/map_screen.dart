@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:effective_flutter_lab/data/repositories/map_locations/map_locations_repository.dart';
+import 'package:effective_flutter_lab/presentation/map/view/map_list_screen.dart';
+import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -62,12 +62,17 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  static final boxDecoration = BoxDecoration(
+    color: AppColors.whiteColor,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow(color: Colors.black45, blurRadius: 1, offset: Offset(1, 1)),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: MapLocationsRepository(dio: Dio()).getLocations,
-      ),
       body: YandexMap(
         onMapCreated: (controller) {
           _mapController = controller;
@@ -75,6 +80,37 @@ class _MapScreenState extends State<MapScreen> {
         },
         mapObjects: _mapObjects,
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              height: 48,
+              width: 48,
+              decoration: boxDecoration,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back, color: AppColors.blackColor),
+              ),
+            ),
+            Container(
+              height: 48,
+              width: 48,
+              decoration: boxDecoration,
+              child: IconButton(
+                onPressed:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MapListScreen()),
+                    ),
+                icon: Icon(Icons.map, color: AppColors.blackColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
     );
   }
 }
