@@ -3,8 +3,8 @@ import 'package:drift/drift.dart';
 import 'package:effective_flutter_lab/data/models/category_model.dart';
 import 'package:effective_flutter_lab/data/models/product_model.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
-import 'package:effective_flutter_lab/database/categories_database.dart';
-import 'package:effective_flutter_lab/database/products_database.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/database/categories_database.dart';
+import 'package:effective_flutter_lab/presentation/main_screen/database/products_database.dart';
 import 'package:get_it/get_it.dart';
 
 class MenuCategoriesDataBase implements AbstractMenuAPI {
