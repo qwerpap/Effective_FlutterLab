@@ -1,6 +1,7 @@
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
+import 'package:effective_flutter_lab/presentation/map/bloc/locations_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/map/view/map_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
@@ -91,12 +92,19 @@ class MainScreenState extends State<MainScreen> {
                 context,
                 MaterialPageRoute(builder: (context) => MapScreen()),
               ),
-          child: Row(
-            children: [
-              Icon(Icons.location_on),
-              SizedBox(width: 5),
-              Text('name street'),
-            ],
+          child: BlocBuilder<LocationsListBloc, LocationsListState>(
+            builder: (context, state) {
+              if (state is LocationsListLoaded) {
+                return Row(
+                  children: [
+                    Icon(Icons.location_on),
+                    SizedBox(width: 5),
+                    Text(state.selectedLocation.name, style: Theme.of(context).textTheme.bodyLarge,),
+                  ],
+                );
+              }
+              return SizedBox();
+            },
           ),
         ),
         bottom: PreferredSize(

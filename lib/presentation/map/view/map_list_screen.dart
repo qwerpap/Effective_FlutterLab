@@ -28,7 +28,12 @@ class MapListScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right_outlined),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.read<LocationsListBloc>().add(
+                        SelectLocation(location: state.locationsList[index]),
+                      );
+                    },
                   ),
             );
           }

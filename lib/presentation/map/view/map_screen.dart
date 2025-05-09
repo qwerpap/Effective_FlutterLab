@@ -1,7 +1,13 @@
+import 'dart:async';
+
+import 'package:effective_flutter_lab/presentation/map/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map/models/latlong_location.dart';
+import 'package:effective_flutter_lab/presentation/map/models/named_location.dart';
 import 'package:effective_flutter_lab/presentation/map/view/map_list_screen.dart';
+import 'package:effective_flutter_lab/presentation/map/widgets/app_map_object.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class MapScreen extends StatefulWidget {
@@ -12,57 +18,9 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final Location _location = Location();
-  late YandexMapController _mapController;
-  List<MapObject> _mapObjects = [];
+  final mapControllerCompleter = Completer<YandexMapController>();
 
-  @override
-  void initState() {
-    super.initState();
-    // Инициализация после создания карты
-  }
-
-  Future<void> _initializeLocation() async {
-    bool serviceEnabled = await _location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await _location.requestService();
-      if (!serviceEnabled) return;
-    }
-
-    PermissionStatus permissionGranted = await _location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await _location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
-    }
-
-    final locationData = await _location.getLocation();
-
-    final point = Point(
-      latitude: locationData.latitude!,
-      longitude: locationData.longitude!,
-    );
-
-    _mapController.moveCamera(
-      CameraUpdate.newCameraPosition(CameraPosition(target: point, zoom: 16)),
-    );
-
-    final placemark = PlacemarkMapObject(
-      mapId: const MapObjectId('my_location'),
-      point: point,
-      icon: PlacemarkIcon.single(
-        PlacemarkIconStyle(
-          image: BitmapDescriptor.fromAssetImage('assets/png/coffe_image.png'),
-          scale: 1.5,
-        ),
-      ),
-    );
-
-    setState(() {
-      _mapObjects = [placemark];
-    });
-  }
-
-  static final boxDecoration = BoxDecoration(
+  static BoxDecoration boxDecoration = BoxDecoration(
     color: AppColors.whiteColor,
     borderRadius: BorderRadius.circular(8),
     boxShadow: [
@@ -70,15 +28,58 @@ class _MapScreenState extends State<MapScreen> {
     ],
   );
 
+  Future<void> _moveToCurrentLocation(LatlongLocation appLatLong) async {
+    (await mapControllerCompleter.future).moveCamera(
+      animation: MapAnimation(type: MapAnimationType.linear, duration: 1),
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: Point(latitude: appLatLong.lat, longitude: appLatLong.long),
+          zoom: 16,
+        ),
+      ),
+    );
+  }
+
+  List<PlacemarkMapObject> _getPlacemarkObjects(
+    BuildContext context,
+    List<NamedLocation> locations,
+  ) {
+    List<PlacemarkMapObject> mapPoints =
+        locations
+            .map(
+              (point) =>
+                  AppMapObject(
+                    point: point,
+                    context: context,
+                  ).getPlacemarkObject(),
+            )
+            .toList();
+    return mapPoints;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<LocationsListBloc>().add(
+      GetPermission(move: _moveToCurrentLocation),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: YandexMap(
-        onMapCreated: (controller) {
-          _mapController = controller;
-          _initializeLocation();
+      body: BlocBuilder<LocationsListBloc, LocationsListState>(
+        builder: (context, state) {
+          return YandexMap(
+            onMapCreated: (controller) {
+              mapControllerCompleter.complete(controller);
+            },
+            mapObjects:
+                state is LocationsListLoaded
+                    ? _getPlacemarkObjects(context, state.locationsList)
+                    : [],
+          );
         },
-        mapObjects: _mapObjects,
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

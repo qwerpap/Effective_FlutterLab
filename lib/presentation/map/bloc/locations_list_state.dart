@@ -9,8 +9,12 @@ class LocationsListLoading extends LocationsListState {}
 
 class LocationsListLoaded extends LocationsListState {
   final List<NamedLocation> locationsList;
+  final NamedLocation selectedLocation;
 
-  LocationsListLoaded({required this.locationsList});
+  LocationsListLoaded({
+    required this.locationsList,
+    required this.selectedLocation,
+  });
 }
 
 class LocationsListFailure extends LocationsListState {
