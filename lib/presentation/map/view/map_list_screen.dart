@@ -30,6 +30,7 @@ class MapListScreen extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right_outlined),
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.pop(context);
                       context.read<LocationsListBloc>().add(
                         SelectLocation(location: state.locationsList[index]),
                       );
