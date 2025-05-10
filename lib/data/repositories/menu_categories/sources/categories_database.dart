@@ -3,19 +3,17 @@ import 'package:drift/drift.dart';
 import 'package:effective_flutter_lab/data/models/category_model.dart';
 import 'package:effective_flutter_lab/data/models/product_model.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
-import 'package:effective_flutter_lab/presentation/main_screen/database/categories_database.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/database/products_database.dart';
 import 'package:get_it/get_it.dart';
 
 class MenuCategoriesDataBase implements AbstractMenuAPI {
-  final CategoriesDatabase categoriesDB = GetIt.I<CategoriesDatabase>();
   final ProductsDatabase productsDB = GetIt.I<ProductsDatabase>();
 
   Future<void> saveCategoriesToDB(List<CategoryModel> slugs) async {
-    await categoriesDB.delete(categoriesDB.categoriesItems).go();
+    await productsDB.delete(productsDB.categoriesItems).go();
     for (final slug in slugs) {
-      await categoriesDB
-          .into(categoriesDB.categoriesItems)
+      await productsDB
+          .into(productsDB.categoriesItems)
           .insert(
             CategoriesItemsCompanion.insert(
               id: Value(slug.id),
@@ -38,7 +36,7 @@ class MenuCategoriesDataBase implements AbstractMenuAPI {
           .into(productsDB.productsItems)
           .insert(
             ProductsItemsCompanion.insert(
-              id: product.id,
+              id: Value(product.id),
               imageUrl: product.imageUrl,
               name: product.name,
               description: product.description,
@@ -52,7 +50,7 @@ class MenuCategoriesDataBase implements AbstractMenuAPI {
   @override
   Future<List<CategoryModel>> getCategoriesList() async {
     List<CategoriesItem> dbCategories =
-        await categoriesDB.select(categoriesDB.categoriesItems).get();
+        await productsDB.select(productsDB.categoriesItems).get();
 
     List<CategoryModel> rawCategories =
         dbCategories.map((category) {
@@ -63,7 +61,6 @@ class MenuCategoriesDataBase implements AbstractMenuAPI {
 
   @override
   Future<List<ProductModel>> getProductsByCategoryList(int id) async {
-    developer.log('start getProductsByCategoryList');
     List<ProductsItem> dbProducts =
         await (productsDB.select(productsDB.productsItems)
           ..where((p) => p.categoryID.equals(id))).get();

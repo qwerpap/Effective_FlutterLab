@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/map_locations_repository.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
-import 'package:effective_flutter_lab/presentation/main_screen/database/categories_database.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/database/products_database.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/get_products_repository.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
@@ -21,7 +20,6 @@ void main() {
   GetIt.I.registerLazySingleton<AbstractMapLocationsRepository>(
     () => MapLocationsRepository(dio: Dio()),
   );
-  GetIt.I.registerLazySingleton<CategoriesDatabase>(() => CategoriesDatabase());
   GetIt.I.registerLazySingleton<ProductsDatabase>(() => ProductsDatabase());
 
   runApp(const MyApp());

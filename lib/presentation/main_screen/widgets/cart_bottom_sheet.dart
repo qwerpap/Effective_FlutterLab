@@ -15,7 +15,6 @@ class CartBottomSheet extends StatelessWidget {
 
     return BlocListener<SelectedProductsListBloc, SelectedProductsListState>(
       listener: (context, state) {
-        // Если продукты очищены, закрываем bottom sheet
         if (state.products.isEmpty) {
           Navigator.pop(context);
         }

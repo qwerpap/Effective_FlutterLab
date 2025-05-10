@@ -82,7 +82,9 @@ class MenuCategoriesAPI implements AbstractMenuAPI {
         data: jsonEncode(requestBody),
         options: Options(contentType: 'application/json'),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
         return true;
       } else {
         return false;
