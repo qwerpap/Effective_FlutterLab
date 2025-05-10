@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:effective_flutter_lab/data/models/category_model.dart';
-import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
+import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'categories_list_event.dart';
 part 'categories_list_state.dart';

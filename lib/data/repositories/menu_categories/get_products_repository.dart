@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:effective_flutter_lab/data/repositories/abstract_menu_api.dart';
-import 'package:effective_flutter_lab/data/repositories/sources/categories_database.dart';
-import 'package:effective_flutter_lab/data/repositories/sources/menu_categories_api.dart';
-import '../models/category_model.dart';
-import '../models/product_model.dart';
+import 'package:effective_flutter_lab/data/models/category_model.dart';
+import 'package:effective_flutter_lab/data/models/product_model.dart';
+import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
+import 'package:effective_flutter_lab/data/repositories/menu_categories/sources/categories_database.dart';
+import 'package:effective_flutter_lab/data/repositories/menu_categories/sources/menu_categories_api.dart';
 
 class GetProductsRepository implements AbstractMenuAPI {
   GetProductsRepository({required this.dio}) {

@@ -1,6 +1,8 @@
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
+import 'package:effective_flutter_lab/presentation/map/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map/view/map_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:effective_flutter_lab/theme/app_sizes.dart';
@@ -82,10 +84,30 @@ class MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final categoriesListBloc = context.read<CategoriesListBloc>();
-    final selectedProductsListBloc = context.read<SelectedProductsListBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: PreferredSize(
+        title: GestureDetector(
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MapScreen()),
+              ),
+          child: BlocBuilder<LocationsListBloc, LocationsListState>(
+            builder: (context, state) {
+              if (state is LocationsListLoaded) {
+                return Row(
+                  children: [
+                    Icon(Icons.location_on),
+                    SizedBox(width: 5),
+                    Text(state.selectedLocation.name, style: Theme.of(context).textTheme.bodyLarge,),
+                  ],
+                );
+              }
+              return SizedBox();
+            },
+          ),
+        ),
+        bottom: PreferredSize(
           preferredSize: Size.fromHeight(AppSizes.appBarHeight),
           child: SizedBox(
             height: AppSizes.appBarHeight,
@@ -95,6 +117,7 @@ class MainScreenState extends State<MainScreen> {
                   return ScrollablePositionedList.separated(
                     scrollDirection: Axis.horizontal,
                     itemScrollController: barItemController,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     separatorBuilder:
                         (context, _) => SizedBox(
                           width: AppSizes.horizontalCategoriesPadding,
