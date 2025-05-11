@@ -1,5 +1,5 @@
-import 'package:effective_flutter_lab/presentation/map/models/named_location.dart';
-import 'package:effective_flutter_lab/presentation/map/widgets/modal_sheet_view.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/widgets/modal_sheet_view.dart';
 import 'package:flutter/material.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 

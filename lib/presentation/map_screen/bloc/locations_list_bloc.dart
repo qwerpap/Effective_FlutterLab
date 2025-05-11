@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
-import 'package:effective_flutter_lab/presentation/map/models/latlong_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/latlong_location.dart';
 import 'package:location/location.dart';
 import 'package:meta/meta.dart';
-import 'package:effective_flutter_lab/presentation/map/models/named_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'locations_list_event.dart';

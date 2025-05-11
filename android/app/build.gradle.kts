@@ -1,3 +1,13 @@
+import java.util.Properties
+
+// Читаем local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+val yandexMapApiKey = localProperties.getProperty("YANDEX_MAPKIT_API_KEY") ?: ""
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -9,6 +19,10 @@ android {
     namespace = "com.example.effective_flutter_lab"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -28,6 +42,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        buildConfigField("String", "YANDEX_MAPKIT_API_KEY", "\"$yandexMapApiKey\"")
     }
 
     buildTypes {

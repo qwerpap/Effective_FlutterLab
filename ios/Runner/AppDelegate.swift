@@ -8,8 +8,9 @@ import YandexMapsMobile
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    YMKMapKit.setLocale("ru_RU") 
-    YMKMapKit.setApiKey("41c886da-48d7-45c1-b95e-9e85e881e555")
+    let apiKey = Bundle.main.object(forInfoDictionaryKey: "YANDEX_MAPKIT_API_KEY") as? String ?? ""
+    YMKMapKit.setLocale("ru_RU")
+    YMKMapKit.setApiKey(apiKey)
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
-import 'package:effective_flutter_lab/presentation/map/models/named_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 
 class MapLocationsApi implements AbstractMapLocationsRepository {
   MapLocationsApi({required this.dio});

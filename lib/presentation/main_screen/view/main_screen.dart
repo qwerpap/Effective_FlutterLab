@@ -1,8 +1,8 @@
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/widgets/widgets.dart';
-import 'package:effective_flutter_lab/presentation/map/bloc/locations_list_bloc.dart';
-import 'package:effective_flutter_lab/presentation/map/view/map_screen.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/view/map_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:effective_flutter_lab/theme/app_sizes.dart';

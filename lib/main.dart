@@ -1,13 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/map_locations_repository.dart';
+import 'package:effective_flutter_lab/data/repositories/map_locations/sources/map_locations_db.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/abstract_menu_api.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/database/products_database.dart';
 import 'package:effective_flutter_lab/data/repositories/menu_categories/get_products_repository.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/view/main_screen.dart';
-import 'package:effective_flutter_lab/presentation/map/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/database/locations_database.dart';
 import 'package:effective_flutter_lab/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,10 +19,19 @@ void main() {
   GetIt.I.registerLazySingleton<AbstractMenuAPI>(
     () => GetProductsRepository(dio: Dio()),
   );
-  GetIt.I.registerLazySingleton<AbstractMapLocationsRepository>(
-    () => MapLocationsRepository(dio: Dio()),
-  );
   GetIt.I.registerLazySingleton<ProductsDatabase>(() => ProductsDatabase());
+
+  GetIt.I.registerLazySingleton<LocationsDatabase>(() => LocationsDatabase());
+  GetIt.I.registerLazySingleton<MapLocationsDataBase>(
+    () => MapLocationsDataBase(locationsDB: GetIt.I<LocationsDatabase>()),
+  );
+
+  GetIt.I.registerLazySingleton<AbstractMapLocationsRepository>(
+    () => MapLocationsRepository(
+      dio: Dio(),
+      mapLocationsDb: GetIt.I<MapLocationsDataBase>(),
+    ),
+  );
 
   runApp(const MyApp());
 }
