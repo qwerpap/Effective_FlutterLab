@@ -12,7 +12,7 @@ class AppMapObject {
   PlacemarkMapObject getPlacemarkObject() {
     return PlacemarkMapObject(
       mapId: MapObjectId('MapObject ${point.name}'),
-      point: Point(latitude: point.lat, longitude: point.long),
+      point: Point(latitude: point.coords.lat, longitude: point.coords.long),
       opacity: 1,
       icon: PlacemarkIcon.single(
         PlacemarkIconStyle(

@@ -12,7 +12,7 @@ class SelectLocation extends LocationsListEvent {
 }
 
 class GetPermission extends LocationsListEvent {
-  final Future<void> Function(LatlongLocation) move;
+  final Future<void> Function(Coords) move;
 
   GetPermission({required this.move});
 }

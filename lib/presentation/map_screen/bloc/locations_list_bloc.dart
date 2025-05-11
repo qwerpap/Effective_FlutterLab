@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
-import 'package:effective_flutter_lab/presentation/map_screen/models/latlong_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/coords.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:location/location.dart';
 import 'package:meta/meta.dart';
-import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'locations_list_event.dart';
@@ -23,8 +23,7 @@ class LocationsListBloc extends Bloc<LocationsListEvent, LocationsListState> {
 
   NamedLocation selectedLocation = NamedLocation(
     name: "Не выбрано",
-    lat: 0,
-    long: 0,
+    coords: Coords(lat: 0, long: 0)
   );
 
   Future<void> _load(
@@ -81,18 +80,18 @@ class LocationsListBloc extends Bloc<LocationsListEvent, LocationsListState> {
     if (state is LocationsListLoaded) {
       havePermission = await _checkPermission();
 
-      LatlongLocation userLocation;
+      Coords userLocation;
       if (havePermission) {
         LocationData locationData;
         locationData = await location.getLocation();
-        userLocation = LatlongLocation(
+        userLocation = Coords(
           lat: locationData.latitude ?? 0,
           long: locationData.longitude ?? 0,
         );
       } else {
-        userLocation = LatlongLocation(
-          lat: selectedLocation.lat,
-          long: selectedLocation.long,
+        userLocation = Coords(
+          lat: selectedLocation.coords.lat,
+          long: selectedLocation.coords.long,
         );
       }
       await event.move(userLocation);

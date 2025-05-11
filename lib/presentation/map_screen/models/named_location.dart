@@ -1,7 +1,8 @@
+import 'package:effective_flutter_lab/presentation/map_screen/models/coords.dart';
+
 class NamedLocation {
   final String name;
-  final double lat;
-  final double long;
+  final Coords coords;
 
-  NamedLocation({required this.name, required this.lat, required this.long});
+  NamedLocation({required this.name, required this.coords});
 }

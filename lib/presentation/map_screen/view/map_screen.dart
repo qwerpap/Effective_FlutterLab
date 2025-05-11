@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
-import 'package:effective_flutter_lab/presentation/map_screen/models/latlong_location.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/coords.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/view/map_list_screen.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/widgets/app_map_object.dart';
@@ -28,7 +28,7 @@ class _MapScreenState extends State<MapScreen> {
     ],
   );
 
-  Future<void> _moveToCurrentLocation(LatlongLocation appLatLong) async {
+  Future<void> _moveToCurrentLocation(Coords appLatLong) async {
     (await mapControllerCompleter.future).moveCamera(
       animation: MapAnimation(type: MapAnimationType.linear, duration: 1),
       CameraUpdate.newCameraPosition(

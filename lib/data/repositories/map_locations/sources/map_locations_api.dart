@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:effective_flutter_lab/data/repositories/map_locations/abstract_map_locations_repository.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/models/coords.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 
 class MapLocationsApi implements AbstractMapLocationsRepository {
@@ -18,8 +19,10 @@ class MapLocationsApi implements AbstractMapLocationsRepository {
         (data['data'] as List<dynamic>).map(
           (value) => NamedLocation(
             name: value['address'],
-            lat: double.parse(value['lat'].toString()),
-            long: double.parse(value['lng'].toString()),
+            coords: Coords(
+              lat: double.parse(value['lat'].toString()),
+              long: double.parse(value['lng'].toString()),
+            ),
           ),
         ),
       );
