@@ -14,7 +14,6 @@ class LocationsListBloc extends Bloc<LocationsListEvent, LocationsListState> {
     : super(LocationsListInitial()) {
     on<LoadLocationsList>(_load);
     on<SelectLocation>(_location);
-    on<GetPermission>(_getPermissions);
   }
 
   List<NamedLocation> locationsList = [];
@@ -69,53 +68,5 @@ class LocationsListBloc extends Bloc<LocationsListEvent, LocationsListState> {
         ),
       );
     }
-  }
-
-  bool havePermission = false;
-
-  Future<void> _getPermissions(
-    GetPermission event,
-    Emitter<LocationsListState> emit,
-  ) async {
-    if (state is LocationsListLoaded) {
-      havePermission = await _checkPermission();
-
-      Coords userLocation;
-      if (havePermission) {
-        LocationData locationData;
-        locationData = await location.getLocation();
-        userLocation = Coords(
-          lat: locationData.latitude ?? 0,
-          long: locationData.longitude ?? 0,
-        );
-      } else {
-        userLocation = Coords(
-          lat: selectedLocation.coords.lat,
-          long: selectedLocation.coords.long,
-        );
-      }
-      await event.move(userLocation);
-    }
-  }
-
-  final Location location = Location();
-  Future<bool> _checkPermission() async {
-    bool serviceEnabled;
-    PermissionStatus permissionGranted;
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return false;
-      }
-    }
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
   }
 }

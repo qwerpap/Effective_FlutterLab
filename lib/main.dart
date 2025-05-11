@@ -8,7 +8,8 @@ import 'package:effective_flutter_lab/data/repositories/menu_categories/get_prod
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/categories/categories_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/bloc/selected_products/selected_products_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/main_screen/view/main_screen.dart';
-import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/permissions/bloc/permissions_bloc.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/database/locations_database.dart';
 import 'package:effective_flutter_lab/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
                   LocationsListBloc(GetIt.I<AbstractMapLocationsRepository>())
                     ..add(LoadLocationsList()),
         ),
+        BlocProvider<PermissionsBloc>(create: (context) => PermissionsBloc()),
       ],
       child: MaterialApp(
         theme: themeData,

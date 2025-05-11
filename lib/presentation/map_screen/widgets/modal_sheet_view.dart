@@ -1,4 +1,4 @@
-import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations/locations_list_bloc.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:effective_flutter_lab/theme/app_colors.dart';
 import 'package:flutter/material.dart';

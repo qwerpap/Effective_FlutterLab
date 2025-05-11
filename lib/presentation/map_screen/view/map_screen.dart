@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/locations/locations_list_bloc.dart';
+import 'package:effective_flutter_lab/presentation/map_screen/bloc/permissions/bloc/permissions_bloc.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/models/coords.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/models/named_location.dart';
 import 'package:effective_flutter_lab/presentation/map_screen/view/map_list_screen.dart';
@@ -60,58 +61,74 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<LocationsListBloc>().add(
-      GetPermission(move: _moveToCurrentLocation),
+    context.read<PermissionsBloc>().add(
+      RequestLocationPermission(move: _moveToCurrentLocation),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<LocationsListBloc, LocationsListState>(
-        builder: (context, state) {
-          return YandexMap(
-            onMapCreated: (controller) {
-              mapControllerCompleter.complete(controller);
-            },
-            mapObjects:
-                state is LocationsListLoaded
-                    ? _getPlacemarkObjects(context, state.locationsList)
-                    : [],
+    return BlocListener<PermissionsBloc, PermissionsState>(
+      listener: (context, state) {
+        if (state is PermissionsDenied) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Разрешение на геолокацию отклонено')),
           );
-        },
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: boxDecoration,
-              child: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back, color: AppColors.blackColor),
-              ),
-            ),
-            Container(
-              height: 48,
-              width: 48,
-              decoration: boxDecoration,
-              child: IconButton(
-                onPressed:
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MapListScreen()),
-                    ),
-                icon: Icon(Icons.map, color: AppColors.blackColor),
-              ),
-            ),
-          ],
+          if (state is PermissionsError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Ошибка')));
+          }
+        }
+      },
+      child: Scaffold(
+        body: BlocBuilder<LocationsListBloc, LocationsListState>(
+          builder: (context, state) {
+            return YandexMap(
+              onMapCreated: (controller) {
+                mapControllerCompleter.complete(controller);
+              },
+              mapObjects:
+                  state is LocationsListLoaded
+                      ? _getPlacemarkObjects(context, state.locationsList)
+                      : [],
+            );
+          },
         ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 48,
+                width: 48,
+                decoration: boxDecoration,
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back, color: AppColors.blackColor),
+                ),
+              ),
+              Container(
+                height: 48,
+                width: 48,
+                decoration: boxDecoration,
+                child: IconButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapListScreen(),
+                        ),
+                      ),
+                  icon: Icon(Icons.map, color: AppColors.blackColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
     );
   }
 }
